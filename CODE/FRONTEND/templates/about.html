@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - ML Project</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-brain"></i> ML Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('about') }}">
+                            <i class="fas fa-info-circle"></i> About
+                        </a>
+                    </li>
+                   
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('algo') }}">
+                            <i class="fas fa-chart-line"></i> Algorithms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('predict') }}">
+                            <i class="fas fa-magic"></i> Predict
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-container" style="margin-top: 80px;">
+        <div class="container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- About Content -->
+            <div class="content-card">
+                <div class="page-header">
+                    <h1>About Our Project</h1>
+                    <p>Advanced Machine Learning Binary Classification System</p>
+                </div>
+                
+                <div class="about-section">
+                    <div class="about-content">
+                        <h3><i class="fas fa-bullseye"></i> Project Overview</h3>
+                        <p>
+                            Welcome to our cutting-edge Machine Learning Prediction System! This project is designed to provide 
+                            accurate binary classification predictions using state-of-the-art machine learning algorithms. Our 
+                            platform combines powerful data processing, advanced feature selection, and multiple ML models to 
+                            deliver reliable predictions with high accuracy.
+                        </p>
+                        <p>
+                            Built with Flask, Python, and modern web technologies, this system offers an intuitive interface 
+                            for data scientists, researchers, and ML enthusiasts to upload datasets, analyze algorithm performance, 
+                            and generate real-time predictions with detailed confidence scores.
+                        </p>
+                        
+                        <h3><i class="fas fa-rocket"></i> Key Features</h3>
+                        <ul>
+                            <li><strong>Multiple ML Algorithms:</strong> Compare SVM, Random Forest, and XGBoost side-by-side</li>
+                            <li><strong>Intelligent Feature Selection:</strong> Automatic selection of top 10 features using SelectKBest</li>
+                            <li><strong>Data Preprocessing:</strong> Automated cleaning, scaling, and label encoding</li>
+                            <li><strong>Real-time Predictions:</strong> Instant results with probability distributions</li>
+                            <li><strong>Interactive Visualizations:</strong> Confusion matrices, accuracy charts, and performance metrics</li>
+                            <li><strong>Secure User Management:</strong> Registration, login, and session handling with MySQL</li>
+                            <li><strong>Dataset Upload:</strong> Support for CSV and TXT files with preview functionality</li>
+                            <li><strong>Model Persistence:</strong> Trained models and scalers saved for quick predictions</li>
+                            <li><strong>Responsive Design:</strong> Beautiful UI that works on all devices</li>
+                            <li><strong>Performance Tracking:</strong> Save and review prediction history</li>
+                        </ul>
+                        
+                        <h3><i class="fas fa-brain"></i> Machine Learning Algorithms</h3>
+                        <p>
+                            Our system utilizes three powerful machine learning algorithms, each with unique strengths:
+                        </p>
+                        
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-vector-square"></i>
+                                    </div>
+                                    <h4>Support Vector Machine (SVM)</h4>
+                                    <p>
+                                        Excellent for high-dimensional data with clear margin of separation. 
+                                        Uses kernel trick for non-linear classification.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-tree"></i>
+                                    </div>
+                                    <h4>Random Forest</h4>
+                                    <p>
+                                        Ensemble method using multiple decision trees. Robust against overfitting 
+                                        with high accuracy and feature importance.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <h4>XGBoost</h4>
+                                    <p>
+                                        Gradient boosting framework with superior performance. Optimized for 
+                                        speed and model accuracy with regularization.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3><i class="fas fa-cogs"></i> Technology Stack</h3>
+                        <p>
+                            This project leverages modern technologies and frameworks:
+                        </p>
+                        <ul>
+                            <li><strong>Backend:</strong> Flask (Python web framework)</li>
+                            <li><strong>Database:</strong> MySQL with mysql-connector-python</li>
+                            <li><strong>Machine Learning:</strong> scikit-learn, XGBoost, pandas, numpy</li>
+                            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript, Bootstrap 5</li>
+                            <li><strong>Visualization:</strong> Matplotlib, Seaborn</li>
+                            <li><strong>Icons:</strong> Font Awesome</li>
+                            <li><strong>Model Persistence:</strong> joblib, pickle</li>
+                        </ul>
+                        
+                        <h3><i class="fas fa-chart-line"></i> Methodology</h3>
+                        <p>Our comprehensive machine learning pipeline includes:</p>
+                        <ol>
+                            <li><strong>Data Collection:</strong> Upload datasets through user-friendly interface</li>
+                            <li><strong>Data Cleaning:</strong> Remove duplicates, handle missing values</li>
+                            <li><strong>Feature Selection:</strong> SelectKBest with F-classification to identify top 10 features</li>
+                            <li><strong>Data Preprocessing:</strong> StandardScaler normalization and label encoding</li>
+                            <li><strong>Train-Test Split:</strong> 80-20 split with stratification for balanced classes</li>
+                            <li><strong>Model Training:</strong> Train SVM, Random Forest, and XGBoost simultaneously</li>
+                            <li><strong>Model Evaluation:</strong> Accuracy, precision, recall, F1-score, confusion matrix</li>
+                            <li><strong>Model Comparison:</strong> Side-by-side performance analysis</li>
+                            <li><strong>Prediction:</strong> Real-time classification with confidence scores</li>
+                            <li><strong>Results Storage:</strong> Save predictions to database for future reference</li>
+                        </ol>
+                        
+                        <h3><i class="fas fa-users"></i> Use Cases</h3>
+                        <p>This system can be applied to various binary classification problems:</p>
+                        <ul>
+                            <li>Medical diagnosis (Disease present/absent)</li>
+                            <li>Spam detection (Spam/Not spam)</li>
+                            <li>Credit approval (Approved/Rejected)</li>
+                            <li>Customer churn prediction (Churn/Retain)</li>
+                            <li>Fraud detection (Fraudulent/Legitimate)</li>
+                            <li>Quality control (Pass/Fail)</li>
+                            <li>Sentiment analysis (Positive/Negative)</li>
+                            <li>Image classification (Binary categories)</li>
+                        </ul>
+                        
+                        <h3><i class="fas fa-shield-alt"></i> Security & Privacy</h3>
+                        <p>
+                            We take security seriously. User passwords are hashed using SHA-256 encryption, 
+                            sessions are managed securely, and all database connections use proper authentication. 
+                            Your data and predictions are stored safely in MySQL with proper access controls.
+                        </p>
+                        
+                        <h3><i class="fas fa-lightbulb"></i> Future Enhancements</h3>
+                        <ul>
+                            <li>Support for multi-class classification</li>
+                            <li>Deep learning models integration</li>
+                            <li>API endpoints for external access</li>
+                            <li>Advanced visualization dashboard</li>
+                            <li>Model hyperparameter tuning interface</li>
+                            <li>Batch prediction from uploaded files</li>
+                            <li>Export predictions to various formats</li>
+                            <li>Real-time model retraining</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Stats -->
+            <div class="content-card">
+                <div class="page-header">
+                    <h1>Project Statistics</h1>
+                    <p>Numbers that matter</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <h2>3</h2>
+                        <p>ML Algorithms</p>
+                    </div>
+                    <div class="stat-box">
+                        <h2>2500+</h2>
+                        <p>Features Analyzed</p>
+                    </div>
+                    <div class="stat-box">
+                        <h2>10</h2>
+                        <p>Best Features</p>
+                    </div>
+                    <div class="stat-box">
+                        <h2>90%+</h2>
+                        <p>Accuracy Achieved</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Section -->
+            <div class="content-card text-center">
+                <h2 class="mb-4"><i class="fas fa-envelope"></i> Get In Touch</h2>
+                <p class="lead mb-4">Have questions or suggestions? We'd love to hear from you!</p>
+                <div class="social-links" style="justify-content: center;">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h4><i class="fas fa-brain"></i> ML Predictor</h4>
+                <p>Advanced Machine Learning Solution for Binary Classification</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 ML Predictor. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

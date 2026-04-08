@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithms - ML Project</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-brain"></i> ML Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">
+                            <i class="fas fa-info-circle"></i> About
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('algo') }}">
+                            <i class="fas fa-chart-line"></i> Algorithms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('predict') }}">
+                            <i class="fas fa-magic"></i> Predict
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-container" style="margin-top: 80px;">
+        <div class="container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Algorithm Performance Section -->
+            <div class="content-card">
+                <div class="page-header">
+                    <h1><i class="fas fa-chart-bar"></i> Model Performance</h1>
+                    <p>Compare accuracy and metrics of different machine learning algorithms</p>
+                </div>
+                
+                {% if accuracies %}
+                <!-- Find best model -->
+                {% set best_model = namespace(name='', accuracy=0) %}
+                {% for model, metrics in accuracies.items() %}
+                    {% if metrics.accuracy > best_model.accuracy %}
+                        {% set best_model.name = model %}
+                        {% set best_model.accuracy = metrics.accuracy %}
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Algorithm Cards -->
+                <div class="algo-cards">
+                    <!-- SVM Card -->
+                    <div class="algo-card">
+                        {% if best_model.name == 'SVM' %}
+                        <span class="best-model-badge">
+                            <i class="fas fa-trophy"></i> Best Model
+                        </span>
+                        {% endif %}
+                        <h3>
+                            <i class="fas fa-vector-square"></i> Support Vector Machine
+                        </h3>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Accuracy</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.SVM.accuracy) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.SVM.accuracy * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Precision</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.SVM.precision) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.SVM.precision * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Recall</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.SVM.recall) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.SVM.recall * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">F1-Score</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.SVM.f1_score) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.SVM.f1_score * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <h4 style="color: #667eea;">{{ "%.2f"|format(accuracies.SVM.accuracy * 100) }}%</h4>
+                            <p class="text-muted">Overall Accuracy</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Random Forest Card -->
+                    <div class="algo-card">
+                        {% if best_model.name == 'Random Forest' %}
+                        <span class="best-model-badge">
+                            <i class="fas fa-trophy"></i> Best Model
+                        </span>
+                        {% endif %}
+                        <h3>
+                            <i class="fas fa-tree"></i> Random Forest
+                        </h3>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Accuracy</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies['Random Forest'].accuracy) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies['Random Forest'].accuracy * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Precision</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies['Random Forest'].precision) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies['Random Forest'].precision * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Recall</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies['Random Forest'].recall) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies['Random Forest'].recall * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">F1-Score</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies['Random Forest'].f1_score) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies['Random Forest'].f1_score * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <h4 style="color: #667eea;">{{ "%.2f"|format(accuracies['Random Forest'].accuracy * 100) }}%</h4>
+                            <p class="text-muted">Overall Accuracy</p>
+                        </div>
+                    </div>
+                    
+                    <!-- XGBoost Card -->
+                    <div class="algo-card">
+                        {% if best_model.name == 'XGBoost' %}
+                        <span class="best-model-badge">
+                            <i class="fas fa-trophy"></i> Best Model
+                        </span>
+                        {% endif %}
+                        <h3>
+                            <i class="fas fa-bolt"></i> XGBoost
+                        </h3>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Accuracy</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.XGBoost.accuracy) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.XGBoost.accuracy * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Precision</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.XGBoost.precision) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.XGBoost.precision * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Recall</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.XGBoost.recall) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.XGBoost.recall * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">F1-Score</span>
+                            <span class="metric-value">{{ "%.4f"|format(accuracies.XGBoost.f1_score) }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" data-width="{{ (accuracies.XGBoost.f1_score * 100)|int }}%" style="width: 0;"></div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <h4 style="color: #667eea;">{{ "%.2f"|format(accuracies.XGBoost.accuracy * 100) }}%</h4>
+                            <p class="text-muted">Overall Accuracy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Best Model Highlight -->
+                <div class="alert alert-success mt-5 text-center" role="alert" style="font-size: 1.2rem; padding: 30px;">
+                    <h3><i class="fas fa-trophy"></i> Best Performing Model</h3>
+                    <h2 class="text-gradient mt-3">{{ best_model.name }}</h2>
+                    <p class="mb-0 mt-2">with <strong>{{ "%.2f"|format(best_model.accuracy * 100) }}%</strong> accuracy</p>
+                </div>
+                
+                {% else %}
+                <!-- No Data Available -->
+                <div class="alert alert-warning text-center" role="alert">
+                    <h4><i class="fas fa-exclamation-triangle"></i> No Model Results Available</h4>
+                    <p class="mb-0">Please upload a dataset and train the models first.</p>
+                    <a href="{{ url_for('upload') }}" class="btn btn-gradient btn-custom mt-3">
+                        <i class="fas fa-upload"></i> Upload Dataset
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Algorithm Information -->
+            <div class="content-card">
+                <div class="page-header">
+                    <h2><i class="fas fa-info-circle"></i> About These Algorithms</h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-vector-square"></i>
+                            </div>
+                            <h4>Support Vector Machine</h4>
+                            <p>
+                                <strong>Type:</strong> Discriminative Classifier<br>
+                                <strong>Kernel:</strong> RBF (Radial Basis Function)<br>
+                                <strong>Best For:</strong> High-dimensional data, clear margin separation
+                            </p>
+                            <hr>
+                            <p class="text-muted">
+                                SVM works by finding the hyperplane that best separates different classes. 
+                                It's particularly effective when there's a clear margin of separation and 
+                                can handle non-linear classification using kernel tricks.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <h4>Random Forest</h4>
+                            <p>
+                                <strong>Type:</strong> Ensemble Method<br>
+                                <strong>Estimators:</strong> 100 Decision Trees<br>
+                                <strong>Best For:</strong> Robust predictions, feature importance
+                            </p>
+                            <hr>
+                            <p class="text-muted">
+                                Random Forest creates multiple decision trees and merges their predictions. 
+                                It reduces overfitting and provides excellent accuracy by averaging multiple 
+                                tree outputs. Great for understanding feature importance.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h4>XGBoost</h4>
+                            <p>
+                                <strong>Type:</strong> Gradient Boosting<br>
+                                <strong>Method:</strong> Sequential Ensemble<br>
+                                <strong>Best For:</strong> High performance, speed, accuracy
+                            </p>
+                            <hr>
+                            <p class="text-muted">
+                                XGBoost uses gradient boosting framework that builds trees sequentially, 
+                                where each new tree corrects errors from previous ones. Known for 
+                                winning ML competitions with superior performance and speed.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metrics Explanation -->
+            <div class="content-card">
+                <div class="page-header">
+                    <h2><i class="fas fa-graduation-cap"></i> Understanding the Metrics</h2>
+                </div>
+                
+                <div class="accordion" id="metricsAccordion">
+                    <!-- Accuracy -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accuracy">
+                                <i class="fas fa-bullseye me-2"></i> Accuracy
+                            </button>
+                        </h2>
+                        <div id="accuracy" class="accordion-collapse collapse show" data-bs-parent="#metricsAccordion">
+                            <div class="accordion-body">
+                                <strong>Definition:</strong> The ratio of correctly predicted observations to total observations.<br>
+                                <strong>Formula:</strong> (TP + TN) / (TP + TN + FP + FN)<br>
+                                <strong>Range:</strong> 0 to 1 (0% to 100%)<br>
+                                <strong>Best When:</strong> Classes are balanced and all types of errors are equally important.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Precision -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#precision">
+                                <i class="fas fa-crosshairs me-2"></i> Precision
+                            </button>
+                        </h2>
+                        <div id="precision" class="accordion-collapse collapse" data-bs-parent="#metricsAccordion">
+                            <div class="accordion-body">
+                                <strong>Definition:</strong> The ratio of correctly predicted positive observations to total predicted positives.<br>
+                                <strong>Formula:</strong> TP / (TP + FP)<br>
+                                <strong>Range:</strong> 0 to 1 (0% to 100%)<br>
+                                <strong>Best When:</strong> The cost of false positives is high (e.g., spam detection).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recall -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#recall">
+                                <i class="fas fa-search me-2"></i> Recall (Sensitivity)
+                            </button>
+                        </h2>
+                        <div id="recall" class="accordion-collapse collapse" data-bs-parent="#metricsAccordion">
+                            <div class="accordion-body">
+                                <strong>Definition:</strong> The ratio of correctly predicted positive observations to all actual positives.<br>
+                                <strong>Formula:</strong> TP / (TP + FN)<br>
+                                <strong>Range:</strong> 0 to 1 (0% to 100%)<br>
+                                <strong>Best When:</strong> The cost of false negatives is high (e.g., disease detection).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- F1-Score -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1score">
+                                <i class="fas fa-balance-scale me-2"></i> F1-Score
+                            </button>
+                        </h2>
+                        <div id="f1score" class="accordion-collapse collapse" data-bs-parent="#metricsAccordion">
+                            <div class="accordion-body">
+                                <strong>Definition:</strong> The harmonic mean of Precision and Recall.<br>
+                                <strong>Formula:</strong> 2 × (Precision × Recall) / (Precision + Recall)<br>
+                                <strong>Range:</strong> 0 to 1 (0% to 100%)<br>
+                                <strong>Best When:</strong> You need a balance between Precision and Recall, especially with imbalanced classes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="text-center mt-4 mb-5">
+                <a href="{{ url_for('predict') }}" class="btn btn-gradient btn-custom btn-lg">
+                    <i class="fas fa-magic"></i> Start Making Predictions
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h4><i class="fas fa-brain"></i> ML Predictor</h4>
+                <p>Advanced Machine Learning Solution for Binary Classification</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 ML Predictor. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
